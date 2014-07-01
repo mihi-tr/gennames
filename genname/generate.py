@@ -3,13 +3,7 @@ import random
 import time
 import re
 import functools
-
-f=open("adjectives.txt")
-adjectives=[i.strip() for i in f]
-f.close
-f=open("nounlist.txt")
-nouns=[i.strip() for i in f]
-f.close()
+from genname.words import adjectives, nouns
 
 random.seed(time.time())
 
@@ -21,11 +15,17 @@ def plural(noun):
     return "%sies"%noun[:-1]
   return "%ss"%noun
 
-def generate_names(num):
+def generate_names(num,plural=False):
   a=random.sample(adjectives,num)
   n=random.sample(nouns,num)
   for (a,n) in zip(a,n):
-    yield "The %s %s"%(a,plural(n))
+    if plural:
+        yield "The %s %s"%(a,plural(n))
+    else:
+        yield "%s %s"%(a,n)
+
+def generate_name():
+    return generate_names(1).next()
 
 if __name__=="__main__":
   import sys
@@ -33,5 +33,5 @@ if __name__=="__main__":
     num=int(sys.argv[1])
   except IndexError:
     num=5
-  for i in generate_names(num):
+  for i in generate_names(num,plural=True):
     print(i)
